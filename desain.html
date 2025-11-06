@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lezza Murlog — Desain</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Orbitron', sans-serif;
+  background: radial-gradient(circle at top, #1a001f, #000);
+  color: #fff;
+  min-height: 100vh;
+}
+
+/* Header */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 70px;
+  background: rgba(20, 0, 35, 0.8);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 25px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  z-index: 10;
+}
+header img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+}
+header h1 {
+  font-size: 1.1rem;
+  color: #b74bff;
+  margin-left: 10px;
+  letter-spacing: 2px;
+}
+header .left {
+  display: flex;
+  align-items: center;
+}
+header button {
+  background: #b74bff;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 8px 20px;
+  cursor: pointer;
+  font-family: 'Orbitron';
+  margin-right: 15px;
+  transition: 0.3s;
+}
+header button:hover {
+  box-shadow: 0 0 10px #b74bff;
+}
+
+/* Container */
+.container {
+  padding: 100px 20px 30px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+/* User info */
+.user-tag {
+  text-align: center;        /* 🔹 tengah */
+  font-size: 0.9rem;
+  color: #b74bff;
+  margin-bottom: 25px;
+  opacity: 0.9;
+  background: rgba(255,255,255,0.05);
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(183,75,255,0.3);
+  left: 50%;
+  transform: translateX(-50%);
+  position: relative;
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+/* Card */
+.card {
+  position: relative;
+  background: rgba(255,255,255,0.05);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(183,75,255,0.2);
+  transition: transform 0.3s;
+}
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(183,75,255,0.5);
+}
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.card p {
+  text-align: center;
+  padding: 10px;
+  font-size: 0.9rem;
+}
+.locked::before {
+  content: "🔒";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5rem;
+  color: #b74bff;
+}
+.locked img {
+  filter: blur(5px) brightness(0.4);
+}
+</style>
+</head>
+<body>
+  <header>
+    <div class="left">
+      <img src="logo.png" alt="Logo">
+      <h1>Lezza Murlog</h1>
+    </div>
+    <button onclick="logout()">Logout</button>
+  </header>
+
+  <div class="container">
+    <div class="user-tag" id="userInfo"></div>
+    <div id="designGrid" class="grid"></div>
+  </div>
+
+<script>
+function logout(){
+  localStorage.removeItem('loggedUser');
+  window.location='index.html';
+}
+
+function loadDesigns(){
+  const user = JSON.parse(localStorage.getItem('loggedUser'));
+  const designs = JSON.parse(localStorage.getItem('designs'))||[];
+  const grid = document.getElementById('designGrid');
+  const info = document.getElementById('userInfo');
+  info.innerHTML = `Login sebagai: <b>${user?.username || 'Tamu'}</b> (${user?.type || 'Unknown'})`;
+
+  grid.innerHTML = '';
+  designs.forEach(d=>{
+    const locked = d.access==='PT' && user?.type!=='PT';
+    grid.innerHTML += `
+      <div class="card ${locked ? 'locked' : ''}">
+        <img src="${d.link}" alt="${d.name}">
+        <p>${d.name}</p>
+      </div>
+    `;
+  });
+}
+
+window.onload = loadDesigns;
+</script>
+</body>
+</html>

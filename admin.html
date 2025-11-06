@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lezza Murlog — Admin</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Orbitron', sans-serif;
+  background: radial-gradient(circle at top, #1a001f, #000);
+  color: #fff;
+  min-height: 100vh;
+}
+
+/* Header */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 70px;
+  background: rgba(20, 0, 35, 0.8);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 25px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  z-index: 10;
+}
+header img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+}
+header h1 {
+  font-size: 1.1rem;
+  color: #b74bff;
+  margin-left: 10px;
+  letter-spacing: 2px;
+}
+header .left {
+  display: flex;
+  align-items: center;
+}
+header button {
+  background: #b74bff;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 8px 20px;
+  cursor: pointer;
+  font-family: 'Orbitron';
+  margin-right: 15px;
+  transition: 0.3s;
+}
+header button:hover {
+  box-shadow: 0 0 10px #b74bff;
+}
+
+/* Container */
+.container {
+  padding: 100px 20px 30px;
+  max-width: 900px;
+  margin: auto;
+  text-align: center;
+}
+
+/* Login info */
+.user-tag {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #b74bff;
+  margin-bottom: 25px;
+  opacity: 0.9;
+  background: rgba(255,255,255,0.05);
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(183,75,255,0.3);
+}
+
+/* Form style */
+section {
+  background: rgba(255,255,255,0.05);
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(183,75,255,0.2);
+  padding: 20px;
+  margin-bottom: 30px;
+  text-align: left;
+}
+section h2 {
+  color: #b74bff;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+input, select {
+  width: 100%;
+  background: transparent;
+  border: 1px solid #b74bff;
+  border-radius: 10px;
+  padding: 8px;
+  color: #fff;
+  margin-bottom: 10px;
+  font-family: 'Orbitron';
+}
+button.action {
+  background: #b74bff;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+button.action:hover {
+  box-shadow: 0 0 10px #b74bff;
+}
+.list {
+  margin-top: 10px;
+}
+.list div {
+  background: rgba(255,255,255,0.05);
+  padding: 8px;
+  border-radius: 8px;
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.list span {
+  color: #ccc;
+  font-size: 0.9rem;
+}
+.list button {
+  background: transparent;
+  color: #ff4b4b;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+</style>
+</head>
+<body>
+  <header>
+    <div class="left">
+      <img src="logo.png" alt="Logo">
+      <h1>Lezza Murlog</h1>
+    </div>
+    <button onclick="logout()">Logout</button>
+  </header>
+
+  <div class="container">
+    <div class="user-tag" id="userInfo"></div>
+
+    <!-- Tambah Akun -->
+    <section>
+      <h2>👤 Buat Akun Member / PT</h2>
+      <input type="text" id="newUser" placeholder="Username baru">
+      <input type="password" id="newPass" placeholder="Password">
+      <select id="newType">
+        <option value="member">Member</option>
+        <option value="PT">PT</option>
+      </select>
+      <button class="action" onclick="addUser()">Tambah Akun</button>
+      <div class="list" id="userList"></div>
+    </section>
+
+    <!-- Tambah Desain -->
+    <section>
+      <h2>🎨 Tambah Desain</h2>
+      <input type="text" id="designName" placeholder="Nama Desain">
+      <input type="text" id="designLink" placeholder="Link Gambar">
+      <select id="designAccess">
+        <option value="ALL">ALL</option>
+        <option value="PT">PT</option>
+      </select>
+      <button class="action" onclick="addDesign()">Tambah Desain</button>
+      <div class="list" id="designList"></div>
+    </section>
+  </div>
+
+<script>
+function logout(){
+  localStorage.removeItem('loggedUser');
+  window.location='index.html';
+}
+
+// === USER HANDLING ===
+function addUser(){
+  const name = document.getElementById('newUser').value.trim();
+  const pass = document.getElementById('newPass').value.trim();
+  const type = document.getElementById('newType').value;
+  if(!name || !pass) return alert('Isi username dan password!');
+  const users = JSON.parse(localStorage.getItem('users')) || [];
+  if(users.find(u => u.username === name)) return alert('Username sudah ada!');
+  users.push({username:name,password:pass,type});
+  localStorage.setItem('users', JSON.stringify(users));
+  loadUsers();
+  document.getElementById('newUser').value='';
+  document.getElementById('newPass').value='';
+}
+function deleteUser(name){
+  const users = JSON.parse(localStorage.getItem('users')) || [];
+  const updated = users.filter(u=>u.username!==name);
+  localStorage.setItem('users', JSON.stringify(updated));
+  loadUsers();
+}
+function loadUsers(){
+  const users = JSON.parse(localStorage.getItem('users')) || [];
+  const list = document.getElementById('userList');
+  list.innerHTML = '';
+  users.forEach(u=>{
+    list.innerHTML += `<div><span>${u.username} (${u.type})</span><button onclick="deleteUser('${u.username}')">Hapus</button></div>`;
+  });
+}
+
+// === DESIGN HANDLING ===
+function addDesign(){
+  const name = document.getElementById('designName').value.trim();
+  const link = document.getElementById('designLink').value.trim();
+  const access = document.getElementById('designAccess').value;
+  if(!name || !link) return alert('Isi nama dan link desain!');
+  const designs = JSON.parse(localStorage.getItem('designs')) || [];
+  designs.push({name,link,access});
+  localStorage.setItem('designs', JSON.stringify(designs));
+  loadDesigns();
+  document.getElementById('designName').value='';
+  document.getElementById('designLink').value='';
+}
+function deleteDesign(name){
+  const designs = JSON.parse(localStorage.getItem('designs')) || [];
+  const updated = designs.filter(d=>d.name!==name);
+  localStorage.setItem('designs', JSON.stringify(updated));
+  loadDesigns();
+}
+function loadDesigns(){
+  const designs = JSON.parse(localStorage.getItem('designs')) || [];
+  const list = document.getElementById('designList');
+  list.innerHTML='';
+  designs.forEach(d=>{
+    list.innerHTML += `<div><span>${d.name} [${d.access}]</span><button onclick="deleteDesign('${d.name}')">Hapus</button></div>`;
+  });
+}
+
+// === INIT ===
+window.onload = ()=>{
+  const user = JSON.parse(localStorage.getItem('loggedUser'));
+  document.getElementById('userInfo').innerHTML = 
+    `Login sebagai: <b>${user?.username || 'Tamu'}</b> (${user?.type || 'Unknown'})`;
+  loadUsers();
+  loadDesigns();
+}
+</script>
+</body>
+</html>

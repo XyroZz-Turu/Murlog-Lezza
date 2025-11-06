@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lezza Murlog — Login</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Orbitron', sans-serif;
+  background: radial-gradient(circle at top, #1a001f, #000);
+  color: #fff;
+  height: 100vh;
+  overflow-x: hidden;
+}
+
+/* header */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(20, 0, 35, 0.8);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  z-index: 10;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+header img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+header h1 {
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  color: #b74bff;
+  margin: 0;
+}
+
+/* container */
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+  padding-top: 60px;
+}
+.container img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 20px #b74bff;
+}
+.container h2 {
+  margin: 20px 0 10px;
+  font-weight: 400;
+  color: #ccc;
+}
+input {
+  width: 250px;
+  background: transparent;
+  border: 1px solid #b74bff;
+  border-radius: 20px;
+  padding: 10px 14px;
+  margin: 8px 0;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  transition: 0.3s;
+}
+input:focus {
+  box-shadow: 0 0 10px #b74bff;
+}
+button {
+  width: 250px;
+  padding: 10px;
+  border: none;
+  border-radius: 25px;
+  background: #fff;
+  color: #b74bff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+button:hover {
+  background: #b74bff;
+  color: #fff;
+  box-shadow: 0 0 10px #b74bff;
+}
+#error {
+  color: #ff4b4b;
+  font-size: 14px;
+  margin-top: 10px;
+}
+</style>
+</head>
+<body>
+  <header>
+    <img src="logo.png" alt="Lezza Logo" />
+    <h1>Lezza Murlog</h1>
+  </header>
+
+  <div class="container">
+    <img src="logo.png" alt="Logo" />
+    <h2>Please log-in to your account</h2>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()">LOGIN</button>
+    <p id="error"></p>
+  </div>
+
+<script>
+function login() {
+  const user = document.getElementById('username').value.trim();
+  const pass = document.getElementById('password').value.trim();
+  const users = JSON.parse(localStorage.getItem('users')) || [];
+
+  if (user === 'AdMinHaMA00ZQz') {
+    localStorage.setItem('loggedUser', JSON.stringify({ username: user, type: 'admin' }));
+    return window.location = 'admin.html';
+  }
+
+  const found = users.find(u => u.username === user && u.password === pass);
+  if (!found) {
+    document.getElementById('error').textContent = 'Akun tidak ditemukan atau password salah.';
+  } else {
+    localStorage.setItem('loggedUser', JSON.stringify(found));
+    window.location = 'desain.html';
+  }
+}
+</script>
+</body>
+</html>|
