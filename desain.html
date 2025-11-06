@@ -70,7 +70,7 @@ header button:hover {
 
 /* User info */
 .user-tag {
-  text-align: center;        /* 🔹 tengah */
+  text-align: center;
   font-size: 0.9rem;
   color: #b74bff;
   margin-bottom: 25px;
@@ -97,35 +97,33 @@ header button:hover {
   position: relative;
   background: rgba(255,255,255,0.05);
   border-radius: 15px;
-  overflow: hidden;
   box-shadow: 0 0 10px rgba(183,75,255,0.2);
-  transition: transform 0.3s;
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  padding: 40px 10px;
+  text-align: center;
 }
 .card:hover {
   transform: scale(1.05);
   box-shadow: 0 0 20px rgba(183,75,255,0.5);
 }
-.card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-.card p {
-  text-align: center;
-  padding: 10px;
-  font-size: 0.9rem;
-}
-.locked::before {
+.card.locked::before {
   content: "🔒";
   position: absolute;
   top: 10px;
   right: 10px;
   font-size: 1.5rem;
   color: #b74bff;
+  opacity: 0.8;
 }
-.locked img {
-  filter: blur(5px) brightness(0.4);
+.card.locked {
+  pointer-events: none;
+  opacity: 0.5;
+}
+.card p {
+  margin: 0;
+  font-size: 1rem;
+  color: white;
 }
 </style>
 </head>
@@ -160,8 +158,7 @@ function loadDesigns(){
   designs.forEach(d=>{
     const locked = d.access==='PT' && user?.type!=='PT';
     grid.innerHTML += `
-      <div class="card ${locked ? 'locked' : ''}">
-        <img src="${d.link}" alt="${d.name}">
+      <div class="card ${locked ? 'locked' : ''}" ${!locked ? `onclick="window.open('${d.link}','_blank')"` : ''}>
         <p>${d.name}</p>
       </div>
     `;
